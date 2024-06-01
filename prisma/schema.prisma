@@ -47,4 +47,87 @@ model Address {
   cityId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  restaurant Restaurant?
+}
+
+model Restaurant {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(100)
+  imageUrl String?
+  address Address @relation(fields: [addressId], references: [id])
+  addressId Int @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  openingHours OperningHours[]
+  products Product[]
+}
+
+model OperningHours {
+  id Int @id @default(autoincrement())
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId Int
+  dayOfWeek DayOfWeek
+  openingTime DateTime @db.Time()
+  closingTime DateTime @db.Time()
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+model Category {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(50)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+}
+
+model Product {
+  id Int @id @default(autoincrement())
+  category Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId Int
+  name String @db.VarChar(100)
+  price Decimal? @db.Decimal(10, 2)
+  imageUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  promotions Promotion[]
+}
+
+model Promotion {
+  id Int @id @default(autoincrement())
+  product Product @relation(fields: [productId], references: [id])
+  productId Int
+  description String
+  price Decimal @db.Decimal(10,2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  promotionsSchedules PromotionSchedule[]
+}
+
+model PromotionSchedule {
+  id Int @id @default(autoincrement())
+  promotion Promotion @relation(fields: [promotionId], references: [id])
+  promotionId Int
+  dayOfWeek DayOfWeek
+  startTime DateTime @db.Time()
+  endTime DateTime @db.Time()
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
